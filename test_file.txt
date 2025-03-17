@@ -1,0 +1,5 @@
+1.You are a good boy
+2.You are a bad boy
+3.You are a dog
+4.You are stupid
+5.You are a punk

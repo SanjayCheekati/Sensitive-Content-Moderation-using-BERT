@@ -1,0 +1,95 @@
+/* Particles Effect */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(100, 149, 237, 0.5);
+  border-radius: 50%;
+  animation: float 15s infinite linear;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100vw);
+    opacity: 0;
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(45deg, #4f46e5, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Star Border */
+.star-border-container {
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  background: linear-gradient(45deg, #4f46e5, #06b6d4);
+  background-clip: padding-box;
+}
+
+.star-border-container::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, #4f46e5, #06b6d4);
+  border-radius: 0.7rem;
+  z-index: -1;
+  animation: borderGlow 2s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Click Spark Effect */
+.spark {
+  position: fixed;
+  pointer-events: none;
+  width: 4px;
+  height: 4px;
+  background: #4f46e5;
+  border-radius: 50%;
+  animation: spark 1s ease-out forwards;
+}
+
+@keyframes spark {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(20);
+    opacity: 0;
+  }
+} 
