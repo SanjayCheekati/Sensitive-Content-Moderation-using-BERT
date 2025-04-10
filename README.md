@@ -10,6 +10,10 @@ A modern web application that performs intelligent text analysis using BERT mode
 - 📈 Interactive visualization of analysis results
 - 💾 History tracking with MongoDB integration
 - 🔄 API endpoint for text classification
+- 💬 Positive alternative suggestions for toxic content
+- 🔍 Advanced emoji detection and analysis
+- 📊 Real-time progress tracking for batch processing
+- 🌓 Customizable dark/light theme toggle
 
 ## 🛠️ Tech Stack
 
@@ -18,25 +22,27 @@ A modern web application that performs intelligent text analysis using BERT mode
 - Tailwind CSS
 - Framer Motion
 - React Icons
+- Chart.js
 
 ### Backend
 - Flask
 - Transformers (Hugging Face)
-- MongoDB
+- MongoDB with local storage fallback
 - Python 3.8+
+- Emoji detection
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v14+)
 - Python 3.8+
-- MongoDB
+- MongoDB (optional - the system can work with local storage)
 
 ### Installation
 
 1. Clone the repository
 ```bash
-git clone https://github.com/SanjayCheekati/Senstive-Content-Moderation-using-BERT
+git clone https://github.com/YourUsername/Sensitive-Content-Moderation-System
 ```
 
 2. Setup Backend
@@ -81,11 +87,67 @@ Visit `http://localhost:3000` to access the application.
 - **Response**: 
 ```json
 {
-  "classification": "string",
+  "text": "string",
+  "classification": "string", 
   "confidence": number,
+  "toxic_words": ["string"],
+  "has_emoji": boolean,
+  "positive_suggestion": "string",
+  "direct_positive_alternative": "string",
   "timestamp": "string"
 }
 ```
+
+### File Classification Endpoint
+- **URL**: `/api/content/classify-file`
+- **Method**: `POST`
+- **Body**: Form data with file
+- **Response**: 
+```json
+{
+  "results": [
+    {
+      "text": "string",
+      "classification": "string",
+      "confidence": number,
+      "toxic_words": ["string"],
+      "has_emoji": boolean,
+      "positive_suggestion": "string",
+      "direct_positive_alternative": "string"
+    }
+  ],
+  "total": number
+}
+```
+
+### Progress Tracking Endpoint
+- **URL**: `/api/content/progress`
+- **Method**: `GET`
+- **Response**: 
+```json
+{
+  "total": number,
+  "processed": number,
+  "in_progress": boolean,
+  "error": "string" (optional)
+}
+```
+
+## 🌟 Key Features Explained
+
+### Toxicity Detection
+The system uses a BERT-based model to analyze and classify text as toxic, offensive, or neutral. It can detect toxic words, phrases, and even emojis in the input text.
+
+### Positive Alternative Suggestions
+For toxic or offensive content, the system provides two types of suggestions:
+1. **Direct Positive Alternatives**: Transforms the original message into a positive version by replacing toxic words with positive ones.
+2. **Constructive Responses**: Suggests how to respond to toxic content in a more constructive way.
+
+### Visualization
+The BERT visualization feature shows the step-by-step process of how the BERT model analyzes text, from tokenization to final classification.
+
+### Batch Processing
+Upload text files or CSV files for batch analysis, with real-time progress tracking.
 
 ## 🤝 Contributing
 
@@ -101,8 +163,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- Sanjay Cheekati - [GitHub Profile](https://github.com/SanjayCheekati)
-- Harshitha Maryala - [GitHub Profile](https://github.com/Maryala-Harshitha58)
+- Your Name - [GitHub Profile](https://github.com/YourUsername)
 
 ## 🙏 Acknowledgments
 

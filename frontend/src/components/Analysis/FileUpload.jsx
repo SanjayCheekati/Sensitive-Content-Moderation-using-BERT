@@ -1,9 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const FileUpload = ({ onUpload, loading }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [progress, setProgress] = useState(null);
+  const [progressError, setProgressError] = useState(null);
+
+  // Poll for progress when loading is true
+  useEffect(() => {
+    let intervalId;
+    
+    if (loading) {
+      // Reset progress state
+      setProgress(null);
+      setProgressError(null);
+      
+      // Set up polling
+      intervalId = setInterval(async () => {
+        try {
+          const response = await fetch('http://localhost:5000/api/content/progress');
+          const data = await response.json();
+          
+          setProgress(data);
+          
+          // If processing is complete, clear the interval
+          if (!data.in_progress) {
+            clearInterval(intervalId);
+          }
+          
+          // If there's an error, show it
+          if (data.error) {
+            setProgressError(data.error);
+            clearInterval(intervalId);
+          }
+        } catch (error) {
+          console.error('Error fetching progress:', error);
+          setProgressError('Failed to fetch progress information');
+          clearInterval(intervalId);
+        }
+      }, 500); // Poll every 500ms
+    } else {
+      // Clear progress once loading is done
+      setProgress(null);
+    }
+    
+    // Clean up interval on unmount or when loading changes
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [loading]);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -36,6 +82,12 @@ const FileUpload = ({ onUpload, loading }) => {
     if (selectedFile) {
       onUpload(selectedFile);
     }
+  };
+
+  // Calculate progress percentage
+  const getProgressPercentage = () => {
+    if (!progress || progress.total === 0) return 0;
+    return Math.round((progress.processed / progress.total) * 100);
   };
 
   return (
@@ -99,6 +151,35 @@ const FileUpload = ({ onUpload, loading }) => {
               ✕
             </button>
           </div>
+        </motion.div>
+      )}
+      
+      {/* Progress bar */}
+      {loading && progress && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+        >
+          <div className="mb-2 flex justify-between">
+            <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
+              Processing file...
+            </span>
+            <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
+              {progress.processed} of {progress.total} lines ({getProgressPercentage()}%)
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+            <div 
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
+              style={{ width: `${getProgressPercentage()}%` }}
+            ></div>
+          </div>
+          {progressError && (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+              Error: {progressError}
+            </p>
+          )}
         </motion.div>
       )}
       

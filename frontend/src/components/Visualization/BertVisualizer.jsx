@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaStepForward, FaRedo, FaTimes } from 'react-icons/fa';
 
-const BertVisualizer = ({ text, onClose }) => {
+const BertVisualizer = ({ text, result, onClose }) => {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [tokens, setTokens] = useState([]);
@@ -52,6 +52,58 @@ const BertVisualizer = ({ text, onClose }) => {
   const handleReset = () => {
     setStep(0);
     setIsPlaying(false);
+  };
+
+  // Get classification color based on result type
+  const getClassificationColor = () => {
+    if (!result) return "green";
+    
+    switch (result.classification) {
+      case 'toxic':
+        return "red";
+      case 'offensive':
+        return "yellow";
+      default:
+        return "green";
+    }
+  };
+
+  // Get classification text to display
+  const getClassificationText = () => {
+    if (!result) return "Neutral";
+    return result.classification.charAt(0).toUpperCase() + result.classification.slice(1);
+  };
+
+  // Get confidence percentage
+  const getConfidencePercentage = () => {
+    if (!result) return 75;
+    return (result.confidence * 100).toFixed(1);
+  };
+
+  // Get the appropriate color classes based on classification
+  const getColorClasses = () => {
+    const color = getClassificationColor();
+    
+    switch (color) {
+      case 'red':
+        return {
+          bg: 'bg-red-100 dark:bg-red-900/50',
+          text: 'text-red-800 dark:text-red-200',
+          bar: 'bg-red-500'
+        };
+      case 'yellow':
+        return {
+          bg: 'bg-yellow-100 dark:bg-yellow-900/50',
+          text: 'text-yellow-800 dark:text-yellow-200',
+          bar: 'bg-yellow-500'
+        };
+      default:
+        return {
+          bg: 'bg-green-100 dark:bg-green-900/50',
+          text: 'text-green-800 dark:text-green-200',
+          bar: 'bg-green-500'
+        };
+    }
   };
 
   const renderStep = () => {
@@ -145,6 +197,11 @@ const BertVisualizer = ({ text, onClose }) => {
           </div>
         );
       case 4:
+        const colorClasses = getColorClasses();
+        const bgClass = colorClasses.bg;
+        const textClass = colorClasses.text;
+        const barClass = colorClasses.bar;
+        
         return (
           <motion.div 
             initial={{ opacity: 0 }}
@@ -158,20 +215,20 @@ const BertVisualizer = ({ text, onClose }) => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.3, type: 'spring' }}
-              className="px-6 py-3 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full text-lg"
+              className={`px-6 py-3 ${bgClass} ${textClass} rounded-full text-lg`}
             >
-              Neutral
+              {getClassificationText()}
             </motion.div>
             <div className="w-full max-w-md bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
               <motion.div 
                 initial={{ width: 0 }}
-                animate={{ width: '75%' }}
+                animate={{ width: `${getConfidencePercentage()}%` }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="bg-green-500 h-4 rounded-full"
+                className={`${barClass} h-4 rounded-full`}
               />
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Confidence: 75%
+              Confidence: {getConfidencePercentage()}%
             </div>
           </motion.div>
         );

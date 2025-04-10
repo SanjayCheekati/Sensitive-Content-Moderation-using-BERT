@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from './components/Layout/Header';
 import Hero from './components/Layout/Hero';
 import Sidebar from './components/Layout/Sidebar';
 import TextInput from './components/Analysis/TextInput';
@@ -127,7 +126,15 @@ function App() {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      {/* Add fixed position theme toggle button */}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={toggleDarkMode}
+        className="fixed top-4 right-4 p-2 rounded-full bg-white dark:bg-gray-800 shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 z-50"
+      >
+        {darkMode ? '🌞' : '🌙'}
+      </motion.button>
       
       <Sidebar 
         isOpen={showHistory} 
@@ -206,6 +213,7 @@ function App() {
                   >
                     <BertVisualizer 
                       text={text} 
+                      result={result}
                       onClose={() => setShowVisualization(false)}
                     />
                   </motion.div>

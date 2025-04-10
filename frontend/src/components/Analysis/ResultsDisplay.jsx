@@ -46,8 +46,21 @@ const ResultsDisplay = ({ result, onVisualize, onFeedback }) => {
     
     let highlightedText = text;
     toxicWords.forEach(word => {
-      const regex = new RegExp(`\\b${word}\\b`, 'gi');
-      highlightedText = highlightedText.replace(regex, `<span class="bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-200 px-1 rounded">${word}</span>`);
+      // Special case for emoji characters which are part of toxic words
+      if (word.length === 1 || word.match(/\p{Emoji}/u)) {
+        // For emojis, we need to handle differently since they don't have word boundaries
+        highlightedText = highlightedText.replace(
+          new RegExp(word, 'g'), 
+          `<span class="bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-200 px-1 rounded">${word}</span>`
+        );
+      } else {
+        // For regular words with word boundaries
+        const regex = new RegExp(`\\b${word}\\b`, 'gi');
+        highlightedText = highlightedText.replace(
+          regex, 
+          `<span class="bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-200 px-1 rounded">${word}</span>`
+        );
+      }
     });
     return <div dangerouslySetInnerHTML={{ __html: highlightedText }} />;
   };
@@ -79,6 +92,41 @@ const ResultsDisplay = ({ result, onVisualize, onFeedback }) => {
           }
         </div>
       </div>
+
+      {/* Direct positive alternative for toxic or offensive content */}
+      {result.direct_positive_alternative && (result.classification === 'toxic' || result.classification === 'offensive') && (
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <span className="inline-flex items-center">
+              <span className="mr-2">✨</span>
+              <span>Positive Alternative Message:</span>
+            </span>
+          </h3>
+          <div className="p-4 border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/10 dark:border-purple-700 rounded-lg">
+            <p className="text-purple-800 dark:text-purple-300 font-medium">
+              {result.direct_positive_alternative}
+            </p>
+          </div>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Here's a positive version of your message you might consider.
+          </p>
+        </div>
+      )}
+
+      {/* Positive suggestion section for toxic or offensive content */}
+      {result.positive_suggestion && (result.classification === 'toxic' || result.classification === 'offensive') && (
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Suggested Response:</h3>
+          <div className="p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/10 dark:border-green-700 rounded-lg">
+            <p className="text-green-800 dark:text-green-300">
+              {result.positive_suggestion}
+            </p>
+          </div>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            This is a more constructive way to express your message.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>

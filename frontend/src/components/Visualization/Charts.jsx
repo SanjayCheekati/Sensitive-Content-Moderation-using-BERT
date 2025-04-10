@@ -217,6 +217,13 @@ const Charts = ({ results }) => {
                       </div>
                     </th>
                     <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                    >
+                      <div className="flex items-center">
+                        Positive Alternative
+                      </div>
+                    </th>
+                    <th 
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                       onClick={() => handleSort('confidence')}
                     >
@@ -253,9 +260,32 @@ const Charts = ({ results }) => {
                           {result.classification}
                         </span>
                       </td>
+                      <td className="px-6 py-4">
+                        {result.direct_positive_alternative ? (
+                          <div className="text-sm font-medium text-purple-600 dark:text-purple-400 max-w-xs truncate">
+                            ✨ {result.direct_positive_alternative}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            -
+                          </div>
+                        )}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {(result.confidence * 100).toFixed(2)}%
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${
+                              result.classification === 'toxic'
+                                ? 'bg-red-500'
+                                : result.classification === 'offensive'
+                                ? 'bg-yellow-500'
+                                : 'bg-green-500'
+                            }`}
+                            style={{ width: `${result.confidence * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          {(result.confidence * 100).toFixed(1)}%
                         </div>
                       </td>
                     </tr>
