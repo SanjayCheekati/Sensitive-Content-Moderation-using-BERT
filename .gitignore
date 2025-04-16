@@ -80,3 +80,4 @@ uploaded_images/
 
 # MongoDB
 data/db/
+.qodo
